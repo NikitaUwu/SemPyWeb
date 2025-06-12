@@ -1,0 +1,31 @@
+{# app/templates/result.html #}
+{% extends "base.html" %}
+{% block title %}Результат{% endblock %}
+
+{% block content %}
+<h1>Результат определения жанра</h1>
+
+<table class="table table-bordered w-auto mb-4">
+  <tr>
+    <th>Название файла</th>
+    <td>{{ track.original_filename }}</td>
+  </tr>
+  <tr>
+    <th>Жанр</th>
+    <td>{{ track.genre }}</td>
+  </tr>
+  <tr>
+    <th>Время загрузки</th>
+    <td>{{ track.uploaded_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+  </tr>
+</table>
+
+<div class="d-flex justify-content-start mt-4">
+  <a href="{{ url_for('main.upload') }}" class="btn btn-primary me-2">
+    Загрузить ещё
+  </a>
+  <a href="{{ url_for('main.stats') }}" class="btn btn-secondary">
+    Статистика
+  </a>
+</div>
+{% endblock %}

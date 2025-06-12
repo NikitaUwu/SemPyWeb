@@ -1,0 +1,31 @@
+<!-- app/templates/auth/signup.html -->
+{% extends "base.html" %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+  <h1 class="mb-4">Регистрация</h1>
+  <form method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.email.label(class="form-label") }}
+      {{ form.email(class="form-control") }}
+      {% for err in form.email.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
+    <div class="mb-3">
+      {{ form.password.label(class="form-label") }}
+      {{ form.password(class="form-control") }}
+      {% for err in form.password.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
+    <div class="mb-3">
+      {{ form.confirm_password.label(class="form-label") }}
+      {{ form.confirm_password(class="form-control") }}
+      {% for err in form.confirm_password.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+  </form>
+{% endblock %}

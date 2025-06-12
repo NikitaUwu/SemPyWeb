@@ -1,31 +1,38 @@
-from app import db
+# app/models.py
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from . import db
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
+    __tablename__ = "user"
+
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    _password = db.Column("password", db.String(255), nullable=False)
-    joined_at = db.Column(db.DateTime, server_default=db.func.now())
-    tracks = db.relationship("Track", back_populates="user", cascade="all,delete")
+    email = db.Column(db.String(120), unique=True, index=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    joined_at = db.Column(db.DateTime, default=datetime.utcnow)
+    tracks = db.relationship("Track", backref="owner", lazy="dynamic")
 
-    # --- хелперы для безопасного пароля ---
     @property
     def password(self):
-        raise AttributeError("Password is write-only")
+        raise AttributeError("Пароль нельзя прочитать напрямую")
 
     @password.setter
-    def password(self, raw: str) -> None:
-        self._password = generate_password_hash(raw)
+    def password(self, plaintext):
+        self.password_hash = generate_password_hash(plaintext)
 
-    def verify_password(self, raw: str) -> bool:
-        return check_password_hash(self._password, raw)
+    def verify_password(self, plaintext):
+        return check_password_hash(self.password_hash, plaintext)
 
 
 class Track(db.Model):
+    __tablename__ = "track"
+
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(255), nullable=False)
-    genre = db.Column(db.String(50))
-    uploaded_at = db.Column(db.DateTime, server_default=db.func.now())
+    original_filename = db.Column(db.String(255), nullable=False)
+    genre = db.Column(db.String(64), nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", back_populates="tracks")
+    cover_filename = db.Column(db.String(255), nullable=True)

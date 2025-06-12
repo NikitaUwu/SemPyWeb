@@ -1,0 +1,33 @@
+{# app/templates/upload.html #}
+{% extends "base.html" %}
+{% block title %}Загрузить аудио{% endblock %}
+
+{% block content %}
+<h1>Загрузить аудио для определения жанра</h1>
+<form id="upload-form" method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.file.label(class="form-label") }}
+    {{ form.file(class="form-control") }}
+    {% for err in form.file.errors %}
+      <div class="text-danger">{{ err }}</div>
+    {% endfor %}
+  </div>
+  <button id="submit-btn" type="submit" class="btn btn-primary">
+    Определить жанр
+  </button>
+</form>
+
+<div id="spinner" class="d-none text-center mt-3">
+  <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+  <p>Пожалуйста, дождитесь результата...</p>
+</div>
+
+<script>
+  document.getElementById("upload-form").onsubmit = function(e) {
+    document.getElementById("submit-btn").disabled = true;
+    document.getElementById("spinner").classList.remove("d-none");
+    return true;
+  };
+</script>
+{% endblock %}

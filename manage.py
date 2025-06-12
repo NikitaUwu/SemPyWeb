@@ -1,9 +1,7 @@
+# manage.py
 from app import create_app
-from flask_migrate import Migrate
-from app import db
 
-app = create_app()
-migrate = Migrate(app, db)
+app = create_app()  # по умолчанию используется DefaultConfig
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

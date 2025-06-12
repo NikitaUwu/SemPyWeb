@@ -1,19 +1,32 @@
-from pathlib import Path
+# app/config.py
+
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-INSTANCE_DIR = BASE_DIR / "instance"          # корень instance
-UPLOAD_DIR    = INSTANCE_DIR / "uploads"      # для аудио
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-class BaseConfig:
-    # ...
-    UPLOAD_FOLDER = UPLOAD_DIR
-    MAX_CONTENT_LENGTH = 32 * 1024 * 1024
 
-class DevelopmentConfig(BaseConfig):
-    DEBUG = True
-    # <= ВАЖНО: абсолютный путь, а не относительный
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "SQLALCHEMY_DATABASE_URI",
-        f"sqlite:///{(INSTANCE_DIR / 'app.db').absolute()}",
+class Config:
+    SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "change-me-too")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+class DefaultConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL",
+        f"sqlite:///{os.path.join(basedir, '..', 'instance', 'app.db')}"
     )
+    UPLOAD_FOLDER = os.environ.get(
+        "UPLOAD_FOLDER",
+        os.path.join(basedir, "..", "instance", "uploads")
+    )
+    ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@mail.com")
+
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False
+    JWT_SECRET_KEY = "test-jwt-secret"
+    UPLOAD_FOLDER = os.path.join(basedir, "..", "tests", "tmp_uploads")
+    ADMIN_EMAIL = "test@mail.com"

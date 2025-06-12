@@ -1,0 +1,74 @@
+{# app/templates/stats.html #}
+{% extends "base.html" %}
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+<h1>Ваша статистика</h1>
+
+<div class="mb-3">
+  <a href="{{ url_for('main.stats',
+                      sort='name',
+                      order=(next_order if sort=='name' else 'asc'),
+                      group=(group and '1' or '0')) }}"
+     class="btn btn-outline-primary {% if sort=='name' %}active{% endif %}">
+    Имя {% if sort=='name' %}{{ order=='asc' and '↑' or '↓' }}{% endif %}
+  </a>
+  <a href="{{ url_for('main.stats',
+                      sort='date',
+                      order=(next_order if sort=='date' else 'asc'),
+                      group=(group and '1' or '0')) }}"
+     class="btn btn-outline-primary {% if sort=='date' %}active{% endif %}">
+    Дата {% if sort=='date' %}{{ order=='asc' and '↑' or '↓' }}{% endif %}
+  </a>
+  <a href="{{ url_for('main.stats',
+                      sort=sort,
+                      order=order,
+                      group=(group and '0' or '1')) }}"
+     class="btn btn-outline-success {% if group %}active{% endif %}">
+    {% if group %}Без группировки{% else %}Группировать по жанру{% endif %}
+  </a>
+</div>
+
+{% if group %}
+  {% for genre, items in grouped.items() %}
+    <h3 class="mt-4">{{ genre|capitalize }}</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Жанр</th>
+          <th>Время загрузки</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in items %}
+        <tr>
+          <td>{{ t.original_filename }}</td>
+          <td>{{ t.genre }}</td>
+          <td>{{ t.uploaded_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endfor %}
+{% else %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Жанр</th>
+        <th>Время загрузки</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tracks %}
+      <tr>
+        <td>{{ t.original_filename }}</td>
+        <td>{{ t.genre }}</td>
+        <td>{{ t.uploaded_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

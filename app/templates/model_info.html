@@ -1,0 +1,90 @@
+{# app/templates/model_info.html #}
+{% extends "base.html" %}
+{% block title %}О модели{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Информация о модели</h1>
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">pedromatias97/genre-recognizer-finetuned-gtzan_dset</h5>
+      <p class="card-text">
+        Эта модель обучена на датасете 
+        <a href="https://www.kaggle.com/andradaolteanu/gtzan-dataset-music-genre-classification" target="_blank">
+          GTZAN
+        </a>
+        и умеет классифицировать аудио в <strong>10 жанров</strong>.
+      </p>
+      <a href="https://huggingface.co/pedromatias97/genre-recognizer-finetuned-gtzan_dset" 
+         target="_blank" 
+         class="btn btn-outline-primary">
+        Страница на Hugging Face
+      </a>
+    </div>
+  </div>
+
+  <h2>Поддерживаемые жанры</h2>
+  <div class="mb-4">
+    {% for genre in info.supported_genres %}
+      <span class="badge bg-primary text-white fs-6 me-2 mb-2">
+        {{ genre|capitalize }}
+      </span>
+    {% endfor %}
+  </div>
+
+  <h2>Ограничения и рекомендации</h2>
+  <ul class="mb-4">
+    <li>Максимальная длительность трека: <strong>5 минут</strong>. Длинные аудио автоматически обрезаются.</li>
+    <li>Поддерживаются форматы WAV, MP3, FLAC.</li>
+    <li>Для корректной работы требуется <code>ffmpeg</code> в системном PATH.</li>
+    <li>Результат классификации — один жанр для всего трека.</li>
+    <li>При высокой нагрузке возможна задержка в несколько секунд.</li>
+  </ul>
+
+  <h2>Примеры использования REST-API</h2>
+
+  <h5>1. Получение токена (login)</h5>
+  <pre class="bg-light p-3 rounded">
+(Invoke-RestMethod `
+  -Method Post `
+  -Uri 'http://127.0.0.1:5000/api/v1/auth/login' `
+  -ContentType 'application/json' `
+  -Body '{ "email": "user@example.com", "password": "password123" }'
+).access_token
+  </pre>
+
+  <h5>2. Загрузка трека</h5>
+  <pre class="bg-light p-3 rounded">
+curl -X POST "http://127.0.0.1:5000/api/v1/upload" \
+     -H "Authorization: Bearer <ваш_токен>" \
+     -F "file=@/path/to/song.mp3"
+  </pre>
+
+  <h5>3. Получить список треков</h5>
+  <pre class="bg-light p-3 rounded">
+curl -X GET "http://127.0.0.1:5000/api/v1/tracks" \
+     -H "Authorization: Bearer <ваш_токен>"
+  </pre>
+  <p>PowerShell:</p>
+  <pre class="bg-light p-3 rounded">
+Invoke-RestMethod `
+  -Method Get `
+  -Uri 'http://127.0.0.1:5000/api/v1/tracks' `
+  -Headers @{ Authorization = "Bearer <ваш_токен>" } `
+| Select-Object -ExpandProperty tracks `
+| Format-Table id, filename, genre, uploaded_at -AutoSize
+  </pre>
+
+  <h5>4. Получить детали трека</h5>
+  <pre class="bg-light p-3 rounded">
+curl -X GET "http://127.0.0.1:5000/api/v1/tracks/1" \
+     -H "Authorization: Bearer <ваш_токен>"
+  </pre>
+
+  <div class="mt-5">
+    <a href="{{ url_for('main.upload') }}" class="btn btn-primary me-2">Загрузить трек</a>
+    <a href="{{ url_for('main.stats') }}" class="btn btn-secondary">Посмотреть статистику</a>
+  </div>
+</div>
+{% endblock %}
