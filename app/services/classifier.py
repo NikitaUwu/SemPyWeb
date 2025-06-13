@@ -1,4 +1,3 @@
-# app/services/classifier.py
 from transformers import pipeline
 
 _classifier = None

@@ -1,5 +1,3 @@
-# app/auth/forms.py
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
@@ -29,5 +27,5 @@ class LoginForm(FlaskForm):
         "Пароль",
         validators=[DataRequired()]
     )
-    remember_me = BooleanField("Запомнить меня")  # ← вот это поле
+    remember_me = BooleanField("Запомнить меня")
     submit = SubmitField("Войти")
